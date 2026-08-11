@@ -4,3 +4,4 @@ pillow
 moviepy
 opencv-python
 imageio-ffmpeg
+ffmpeg-python
