@@ -1,0 +1,6 @@
+streamlit
+requests
+pillow
+moviepy
+opencv-python
+imageio-ffmpeg
