@@ -86,17 +86,17 @@ if script:
                     
                     output_video = "output.mp4"
                     
-                    cmd = [
-                        "ffmpeg",
-                        "-framerate", "1/3",
-                        "-pattern_type", "glob",
-                        "-i", str(temp_dir / "scene_*.jpg"),
-                        "-vf", "scale=1280:720",
-                        "-c:v", "libx264",
-                        "-pix_fmt", "yuv420p",
-                        output_video,
-                        "-y"
-                    ]
+cmd = [
+    "ffmpeg",
+    "-framerate", "1/3",
+    "-pattern_type", "glob",
+    "-i", str(temp_dir / "scene_*.jpg"),
+    "-vf", "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:black",
+    "-c:v", "libx264",
+    "-pix_fmt", "yuv420p",
+    output_video,
+    "-y"
+]
                     
                     result = subprocess.run(cmd, capture_output=True, text=True)
                     
