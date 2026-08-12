@@ -80,3 +80,38 @@ if script:
                     st.error(f"❌ 장면 {i+1} 오류: {str(e)}")
             
             if success_count == len(scenes):
+                st.info("🎬 영상 생성 중...")
+                
+                try:
+                    output_video = "output.mp4"
+                    cmd = [
+                        "ffmpeg",
+                        "-framerate", "1/3",
+                        "-pattern_type", "glob",
+                        "-i", str(temp_dir / "scene_*.jpg"),
+                        "-vf", "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2:black",
+                        "-c:v", "libx264",
+                        "-pix_fmt", "yuv420p",
+                        output_video,
+                        "-y"
+                    ]
+                    
+                    result = subprocess.run(cmd, capture_output=True, text=True)
+                    
+                    if result.returncode == 0:
+                        st.success("✅ 영상 생성 완료!")
+                        with open(output_video, "rb") as f:
+                            st.download_button(
+                                label="📥 영상 다운로드",
+                                data=f.read(),
+                                file_name="output.mp4",
+                                mime="video/mp4"
+                            )
+                    else:
+                        st.error(f"오류: {result.stderr}")
+                except Exception as e:
+                    st.error(f"❌ {str(e)}")
+            else:
+                st.error("❌ 일부 이미지 다운로드 실패")
+        else:
+            st.error("❌ 모든 주제를 입력하세요!")
