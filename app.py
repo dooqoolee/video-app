@@ -4,15 +4,20 @@ import os
 from pathlib import Path
 from PIL import Image
 import io
+
 st.set_page_config(page_title="AI 영상 생성기", layout="wide")
 st.title("🎬 AI 영상 생성기")
+
 st.sidebar.title("⚙️ 설정")
 unsplash_key = st.sidebar.text_input("Unsplash API 키:", type="password")
+
 st.write("스크립트를 입력하고 영상을 생성합니다!")
 st.subheader("📝 Step 1: 스크립트 입력")
+
 script = st.text_area("각 장면의 스크립트를 줄 단위로 입력하세요:", 
                       placeholder="예시:\n좋은 아침입니다\n저는 디자이너입니다", 
                       height=150)
+
 if script:
     scenes = [line.strip() for line in script.split('\n') if line.strip()]
     
@@ -52,7 +57,6 @@ if script:
                     image_options = []
                     image_urls = []
                     
-                    # 5개 이미지 다운로드
                     for j in range(5):
                         url = "https://api.unsplash.com/photos/random"
                         params = {
@@ -71,13 +75,12 @@ if script:
                             image_options.append(img_url)
                     
                     if image_options:
-                        # 5개 이미지 표시
                         cols = st.columns(5)
                         selected_idx = None
                         
                         for idx, col in enumerate(cols):
                             with col:
-                                st.image(image_options[idx], use_column_width=True)
+                                st.image(image_options[idx], use_container_width=True)
                                 if st.button(f"선택 {idx+1}", key=f"select_{i}_{idx}"):
                                     selected_idx = idx
                         
@@ -101,15 +104,13 @@ if script:
                     output_video = "output.mp4"
                     
                     images = []
-                    fps_list = []
                     
                     for i in range(len(scenes)):
                         img_path = temp_dir / f"scene_{i}.jpg"
                         img = imageio.imread(str(img_path))
                         duration = scene_data[i]["duration"]
                         
-                        # 각 이미지를 지정된 시간만큼 반복
-                        for _ in range(duration * 3):  # fps=1/3이므로
+                        for _ in range(duration * 3):
                             images.append(img)
                     
                     imageio.mimsave(output_video, images, fps=1/3)
